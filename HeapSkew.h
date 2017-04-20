@@ -56,7 +56,7 @@ BinaryTree<T>* HeapSkew<T>::merge(BinaryTree<T>* left, BinaryTree<T>* right)
    //DO THIS
 
    //background checks
-   if (right->isEmpty())
+   if (left->isEmpty())
    {
       delete left;
       return right;
@@ -69,16 +69,45 @@ BinaryTree<T>* HeapSkew<T>::merge(BinaryTree<T>* left, BinaryTree<T>* right)
    }
 
    //otherwise main function follows
+   T* left_sub = left->getRootItem();
+   T* right_sub = right->getRootItem();
 
+   int compare = (*compare_items) (left_sub, right_sub);
 
+   //check comparison
+   if (compare < 0)
+      return merge(right, left); //calls merge function recursively
 
+   else
+   {
+      //detach both both subtree on left, prepare for moving
+      BinaryTree<T>* left_sub = left->detachLeftSubtree();
+      BinaryTree<T>* right_sub = left->detachRightSubtree();
 
+      //LRL
+      left->attachRightSubtree(left_sub);
+      delete left_sub;
 
+      //check right_sub
+      if (right_sub->isEmpty())
+      {
+         left->attachLeftSubtree(right);
 
+         delete right;
+         delete right_sub;
+         return left;
+      }
 
+      //right_sub not empty, calls merge again, attach existing merger to the left subtree
+      else
+      {
+         BinaryTree<T>* merger = merge(right_sub, right);
+         left->attachLeftSubtree(merger);
 
-
-
+         delete merger;
+         return left;
+      }
+   }
 }
 
 template < class T >
