@@ -31,7 +31,7 @@ class HeapSkew : public Drawable
 // this is a MAXHEAP (largest items to top alphabetical order)
 template < class T >
 HeapSkew<T>::HeapSkew(int (*comp_items) (T* item_1, T* item_2)) : Drawable()
-{ 
+{
    bt = new BinaryTree<T>();
    sze = 0;
 
@@ -39,10 +39,10 @@ HeapSkew<T>::HeapSkew(int (*comp_items) (T* item_1, T* item_2)) : Drawable()
 }
 
 template < class T >
-HeapSkew<T>::~HeapSkew() 
-{ 
+HeapSkew<T>::~HeapSkew()
+{
    delete bt;
-}  
+}
 
 template < class T >
 bool HeapSkew<T>::heapIsEmpty()
@@ -53,11 +53,22 @@ bool HeapSkew<T>::heapIsEmpty()
 template < class T >
 BinaryTree<T>* HeapSkew<T>::merge(BinaryTree<T>* left, BinaryTree<T>* right)
 {
-  //DO THIS
+   //DO THIS
 
+   //background checks
+   if (right->isEmpty())
+   {
+      delete left;
+      return right;
+   }
 
+   if (right->isEmpty())
+   {
+      delete right;
+      return left;
+   }
 
-
+   //otherwise main function follows
 
 
 
@@ -74,22 +85,30 @@ template < class T >
 void HeapSkew<T>::heapInsert(T* item)
 {
    //DO THIS (calls merge, should be short)
+   BinaryTree<T>* insert = new BinaryTree<T>(item);
 
-
-
-
+   //calls merge with new insert item to the right
+   bt = merge(bt, insert);
+   sze++;
 }
 
 template < class T >
 T* HeapSkew<T>::heapRemove()
 {
    //DO THIS (calls merge, should be short)
+   //get the root item for safety to return later
+   T* result = bt->getRootItem();
 
+   //calls detach to respective subtree to isolate root
+   BinaryTree<T>* left = bt->detachLeftSubtree();
+   BinaryTree<T>* right = bt->detachRightSubtree();
 
+   delete bt;
 
-
-
-
+   //calls merge
+   bt = merge(left, right);
+   sze--;
+   return result;
 }
 
 template < class T >
